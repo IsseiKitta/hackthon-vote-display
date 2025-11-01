@@ -3,7 +3,7 @@ info:
   title: ハッカソンの投票結果発表用webアプリのAPI
   version: "1.0.0"
 servers:
-  - url: localhost:3000/api
+  - url: http://localhost:3000/api
 tags:
   - name: auth
     description: ユーザー認証関連のAPI（登録・ログイン）
