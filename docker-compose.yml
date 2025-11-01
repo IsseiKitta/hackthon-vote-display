@@ -1,0 +1,30 @@
+services:
+  web:
+    build:
+      dockerfile: dockerfile.dev
+      context: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
+    depends_on:
+      - db
+    command: ["sh", "-c", "bun run prisma:generate && bun run dev"]
+
+  db:
+    image: postgres:18
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydb
+
+volumes:
+  pg_data:
