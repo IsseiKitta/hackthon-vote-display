@@ -23,7 +23,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
     const isValid = await verifyPassword(user.password, password);
@@ -40,7 +43,7 @@ export async function POST(req: NextRequest) {
     };
 
     // undefinedではないことを示す!マーク
-    const secret = process.env.SECRET_KEY!;
+    const secret = process.env.SECRET_KEY;
 
     if (!secret) {
       console.error("SECRET_KEY is not set");
@@ -74,8 +77,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error(err);
     return NextResponse.json(
-      { message: "Invalid request body" },
-      { status: 400 }
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
