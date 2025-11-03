@@ -42,11 +42,17 @@ export async function POST(req: NextRequest) {
     // undefinedではないことを示す!マーク
     const secret = process.env.SECRET_KEY!;
 
-    const options = {
-      expiresIn: "24h",
-    };
+    if (!secret) {
+      console.error("SECRET_KEY is not set");
+      return NextResponse.json(
+        { message: "Internal server error" },
+        { status: 500 }
+      );
+    }
 
-    const token = generateToken(payload, secret, options);
+    const token = generateToken(payload, secret, {
+      expiresIn: "24h",
+    });
 
     const res = NextResponse.json(
       { id: user.id, message: "Login successful" },
