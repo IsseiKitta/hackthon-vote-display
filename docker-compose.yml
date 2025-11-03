@@ -11,6 +11,7 @@ services:
       - /app/.next
     environment:
       - DATABASE_URL=postgres://myuser:mypassword@db:5432/mydb
+      - SECRET_KEY=u%KZqya28c4EMxNv,,N=uxgM/F^J&5Zc
     depends_on:
       - db
     command: ["sh", "-c", "bun run prisma:generate && bun run dev"]
