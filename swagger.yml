@@ -76,7 +76,13 @@ paths:
                   description: The password for login in clear text
       responses:
         "200":
-          description: ログイン成功
+          description: ログイン成功。JWTトークンはHTTP-only cookieとして返される。
+          headers:
+            Set-Cookie:
+              description: JWTトークンを含むHTTP-only cookie (有効期限24時間)
+              schema:
+                type: string
+                example: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400
           content:
             application/json:
               schema:
@@ -88,9 +94,6 @@ paths:
                   message:
                     type: string
                     example: Login successful
-                  token:
-                    type: string
-                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         "400":
           $ref: "#/components/responses/BadRequest"
         "401":
@@ -284,4 +287,4 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: JWT認証トークン
+      description: "JWT認証トークン (有効期限: 24時間)"
