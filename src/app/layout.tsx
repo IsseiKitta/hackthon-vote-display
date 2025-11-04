@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 // 2. フォントを設定 (必要なウェイトやサブセットを指定)
 const notoSansJp = Noto_Sans_JP({
   subsets: ["japanese", "latin"], // 'latin' は欧文文字用に推奨されます
-  weight: ["400", "700"], // 必要なウェイトを配列で指定
+  weight: ["400", "600", "900"], // 必要なウェイトを配列で指定
   display: 'swap', // フォントの読み込み戦略
   preload: true, // フォントのプリロードを有効化
 });

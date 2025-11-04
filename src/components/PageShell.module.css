@@ -1,0 +1,15 @@
+.shell {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem;
+}
+.left {
+  width: 220px;
+}
+.main {
+  flex: 1;
+}
+.right {
+  width: 220px;
+}

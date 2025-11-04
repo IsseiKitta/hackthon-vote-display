@@ -1,16 +1,23 @@
-import Button from "@/components/Button"; // 作成したボタンをインポート
-import React from "react";
+import PageShell from "@/components/PageShell";
+import Link from "next/link";
+import Button from "@/components/Button";
+import FormField from "@/components/FormField";
 
 export default function Home() {
-  return (
-    <div className="container">
-      <aside>
-      </aside>
-      <main>
-        <h1>Welcome to My App</h1>
-      </main>
-      <aside>
-      </aside>
+  const left = (
+    <div>
+      <Link href="/">← 戻る</Link>
     </div>
+  );
+
+  return (
+    <PageShell left={left}>
+      <h1 className="title">ハッカソン投票ビジュアライザーにログイン</h1>
+      <div className="content">
+        <FormField title="ユーザーネーム" name="username" type="text" placeholder="ユーザー名を入力" />
+        <FormField title="パスワード" name="password" type="password" placeholder="パスワードを入力" />
+      </div>
+      <Button>ログイン</Button>
+    </PageShell>
   );
 }
