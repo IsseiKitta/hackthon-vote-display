@@ -6,7 +6,7 @@ import { verifyToken } from "@/app/lib/auth/jwt";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const cookieHeader = req.headers.get("cookie");
@@ -32,7 +32,8 @@ export async function GET(
 
     verifyToken(token, secret) as { userid: number };
 
-    const voteId = parseInt(params.id);
+    const { id } = await params;
+    const voteId = parseInt(id);
 
     if (isNaN(voteId)) {
       return NextResponse.json(
