@@ -14,7 +14,12 @@ services:
       - SECRET_KEY=u%KZqya28c4EMxNv,,N=uxgM/F^J&5Zc
     depends_on:
       - db
-    command: ["sh", "-c", "bun run prisma:generate && bun run dev"]
+    command:
+      [
+        "sh",
+        "-c",
+        "bun run prisma:generate && bun run prisma:seed && bun run dev",
+      ]
 
   db:
     image: postgres:18
