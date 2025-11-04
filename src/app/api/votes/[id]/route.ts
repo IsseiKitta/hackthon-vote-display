@@ -2,8 +2,12 @@ import { prisma } from "@/app/lib/prisma";
 import { parse } from "cookie";
 import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "@/app/lib/auth/jwt";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const cookieHeader = req.headers.get("cookie");
     if (!cookieHeader) {
@@ -17,18 +21,29 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { vote_id } = body;
-
-    if (!vote_id) {
+    const secret = process.env.SECRET_KEY;
+    if (!secret) {
+      console.error("SECRET_KEY is not set");
       return NextResponse.json(
-        { message: "vote_id is required" },
+        { message: "Internal server error" },
+        { status: 500 }
+      );
+    }
+
+    verifyToken(token, secret) as { userid: number };
+
+    const voteId = parseInt(params.id);
+
+    if (isNaN(voteId)) {
+      return NextResponse.json(
+        { message: "Invalid vote_id" },
         { status: 400 }
       );
     }
 
     const voteData = await prisma.project.findMany({
-      where: { pollId: vote_id },
+      where: { pollId: voteId },
+      orderBy: { votes: "desc" },
     });
 
     return NextResponse.json({ voteData }, { status: 200 });

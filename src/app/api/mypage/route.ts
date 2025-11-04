@@ -32,9 +32,6 @@ export async function GET(req: NextRequest) {
 
     const polls = await prisma.poll.findMany({
       where: { createdBy: decoded.userid },
-      include: {
-        projects: false,
-      },
     });
 
     return NextResponse.json({ polls }, { status: 200 });

@@ -2,6 +2,7 @@ import { prisma } from "@/app/lib/prisma";
 import { parse } from "cookie";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/app/lib/auth/jwt";
+import jwt from "jsonwebtoken";
 
 type Project = {
   teamName: string;
@@ -66,6 +67,9 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (err) {
+    if (err instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
     console.error(err);
     return NextResponse.json(
       { message: "Internal server error" },
