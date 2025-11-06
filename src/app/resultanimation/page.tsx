@@ -177,8 +177,9 @@ export default function ResultPage() {
   
   // 🎨 表示順序のカスタマイズポイント
   // 下位から順に表示 → 逆順ソート: (a, b) => b.rank - a.rank
+  // 🎨 表示順序のカスタマイズポイント
   // 上位から順に表示 → 昇順ソート: (a, b) => a.rank - b.rank
-  const sortedResults = [...results].sort((a, b) => a.rank - b.rank);  // 現在: 下位から順
+  const sortedResults = [...results].sort((a, b) => a.rank - b.rank);  // 表示順: 1位→10位
 
   return (
     <PageShell>
@@ -210,14 +211,21 @@ export default function ResultPage() {
           initial="hidden"
           animate="visible"
         >
-          {sortedResults.map((result, index) => (
-            <ResultCard 
-              key={result.id} 
-              result={result} 
-              maxVotes={maxVotes}
-              delay={index * 0.3}
-            />
-          ))}
+          {sortedResults.map((result, index) => {
+            // 🎨 アニメーション順序: 下位(10位)から上位(1位)へ
+            const totalResults = sortedResults.length;
+            const reverseIndex = totalResults - 1 - index;  // 逆順のインデックス
+            const animationDelay = reverseIndex * 0.4;  // 遅延時間を0.3秒→0.4秒に
+            
+            return (
+              <ResultCard 
+                key={result.id} 
+                result={result} 
+                maxVotes={maxVotes}
+                delay={animationDelay}
+              />
+            );
+          })}
         </motion.div>
       </div>
     </PageShell>
