@@ -8,10 +8,10 @@ export default function Header() {
       <nav>
         <ul className={styles.navLinks}>
           <li className={styles.navItem}>
-            <Link href="/createnewvote">Create New Vote</Link>
+            <Link href="/create-new-vote">Create New Vote</Link>
           </li>
           <li className={styles.navItem}>
-            <Link href="/">Sign in</Link>
+            <Link href="/signin">Sign in</Link>
           </li>
           <li className={styles.navItem}>
             <Link href="/signup">Sign up</Link>

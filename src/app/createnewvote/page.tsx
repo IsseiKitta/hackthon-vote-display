@@ -152,7 +152,7 @@ export default function CreateNewVote() {
               placeholder="得票数を入力"
               value={team.votes.toString()}
               onChange={(e) =>
-                handleTeamChange(team.id, "votes", parseInt(e.target.value) || 0)
+                handleTeamChange(team.id, "votes", parseInt(e.target.value, 10) || 0)
               }
             />
           </div>

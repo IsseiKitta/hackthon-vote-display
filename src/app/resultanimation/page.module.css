@@ -61,7 +61,7 @@
 .resultGrid {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;  /* 1rem → 0.75rem に縮小 */
+  gap: 0.75rem;
   margin-top: 2rem;
 }
 
@@ -74,7 +74,7 @@
   grid-template-columns: 60px 240px 50px 1fr;  /* 4カラム: バッジ | チーム情報 | スペーサー | バー */
   align-items: stretch;
   gap: 0;
-  min-height: 80px;  /* 120px → 80px に縮小 */
+  min-height: 80px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   transition: transform 0.2s, box-shadow 0.2s;
 }

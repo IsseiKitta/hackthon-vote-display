@@ -41,9 +41,60 @@ const mockResults: VoteResult[] = [
 ];
 
 // ============================================
+// アニメーション定数
+// ============================================
+const ANIMATION_CONFIG = {
+  // リストアニメーション
+  LIST_INITIAL_DELAY: 0.5,          // 最初のカードが表示されるまでの遅延（秒）
+  LIST_STAGGER_INTERVAL: 0.4,       // 各カードの表示間隔（秒）
+  LIST_BAR_DURATION: 2.0,           // バーアニメーションの時間（秒）
+  LIST_CARD_DELAY_MULTIPLIER: 0.4,  // カード遅延の係数
+  
+  // 表彰台アニメーション
+  PODIUM_TITLE_DELAY: 0.3,          // タイトル表示の遅延（秒）
+  PODIUM_SECOND_DELAY: 0.6,         // 2位登場の遅延（秒）
+  PODIUM_THIRD_DELAY: 0.8,          // 3位登場の遅延（秒）
+  PODIUM_FIRST_DELAY: 1.0,          // 1位登場の遅延（秒）
+  PODIUM_BASE_SECOND_DELAY: 1.0,    // 2位台座の遅延（秒）
+  PODIUM_BASE_THIRD_DELAY: 1.2,     // 3位台座の遅延（秒）
+  PODIUM_BASE_FIRST_DELAY: 1.4,     // 1位台座の遅延（秒）
+  
+  // カウントアップ
+  COUNT_UP_DURATION: 2,             // カウントアップの時間（秒）
+  
+  // バーグラフ
+  BAR_ANIMATION_DURATION: 1.5,      // バー伸びる時間（秒）
+  
+  // トランジション
+  HEADER_ANIMATION_DURATION: 0.6,   // ヘッダーアニメーションの時間（秒）
+  TOGGLE_BUTTON_DELAY: 1.0,         // 切り替えボタンの表示遅延（秒）
+  MODE_EXIT_DURATION: 0.5,          // モード切り替え時のフェードアウト時間（秒）
+  
+  // 表彰台のサイズ
+  PODIUM_HEIGHT_FIRST: 240,         // 1位の台座の高さ（px）
+  PODIUM_HEIGHT_SECOND: 180,        // 2位の台座の高さ（px）
+  PODIUM_HEIGHT_THIRD: 140,         // 3位の台座の高さ（px）
+  
+  // スプリングアニメーション
+  SPRING_DAMPING: 15,               // スプリングの減衰
+  CARD_SPRING_DAMPING: 20,          // カードスプリングの減衰
+  CARD_SPRING_STIFFNESS: 100,       // カードスプリングの硬さ
+  BADGE_SPRING_DAMPING: 12,         // バッジスプリングの減衰
+  BADGE_SPRING_STIFFNESS: 150,      // バッジスプリングの硬さ
+  TROPHY_SPRING_DAMPING: 10,        // トロフィースプリングの減衰
+  TROPHY_SPRING_STIFFNESS: 200,     // トロフィースプリングの硬さ
+  
+  // 追加の遅延
+  TROPHY_ADDITIONAL_DELAY: 0.5,     // トロフィーの追加遅延（秒）
+  BADGE_ADDITIONAL_DELAY: 0.2,      // バッジの追加遅延（秒）
+  BAR_ADDITIONAL_DELAY: 0.3,        // バーの追加遅延（秒）
+  COUNT_ADDITIONAL_DELAY: 0.5,      // カウントの追加遅延（秒）
+} as const;
+
+// ============================================
 // カウントアップ用カスタムフック
 // ============================================
-function useCountUp(target: number, duration: number = 2) {
+function useCountUp(target: number, duration: number = ANIMATION_CONFIG.COUNT_UP_DURATION) {
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
 
@@ -66,8 +117,8 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.3, // 🎨 各カードの表示間隔（秒）
-      delayChildren: 0.5,   // 🎨 最初のカードが表示されるまでの遅延（秒）
+      staggerChildren: ANIMATION_CONFIG.LIST_STAGGER_INTERVAL,
+      delayChildren: ANIMATION_CONFIG.LIST_INITIAL_DELAY,
     },
   },
 };
@@ -83,8 +134,8 @@ const cardVariants = {
     x: 0,
     transition: {
       type: "spring" as const,
-      damping: 20,
-      stiffness: 100,
+      damping: ANIMATION_CONFIG.CARD_SPRING_DAMPING,
+      stiffness: ANIMATION_CONFIG.CARD_SPRING_STIFFNESS,
     },
   },
 };
@@ -201,8 +252,10 @@ export default function ResultPage() {
   useEffect(() => {
     if (!loading && results.length > 0) {
       // リストアニメーションの総時間を計算
-      // 初期遅延 + (項目数 × 表示間隔) + バーアニメーション時間
-      const totalListAnimationTime = 0.5 + (results.length * 0.4) + 2.0;
+      const totalListAnimationTime = 
+        ANIMATION_CONFIG.LIST_INITIAL_DELAY + 
+        (results.length * ANIMATION_CONFIG.LIST_STAGGER_INTERVAL) + 
+        ANIMATION_CONFIG.LIST_BAR_DURATION;
       
       // リストアニメーション終了後、表彰台モードに切り替え
       const timer = setTimeout(() => {
@@ -322,12 +375,12 @@ export default function ResultPage() {
           />
         )}
 
-        {/* �🎬 タイトルのアニメーション */}
+        {/*  タイトルのアニメーション */}
         <motion.div
           className={styles.header}
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: ANIMATION_CONFIG.HEADER_ANIMATION_DURATION, ease: "easeOut" }}
         >
           <h1 className="title">🎉 投票結果発表 🎉</h1>
           {useMock && (
@@ -346,7 +399,7 @@ export default function ResultPage() {
             className={styles.viewToggle}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 0.5 }}
+            transition={{ delay: ANIMATION_CONFIG.TOGGLE_BUTTON_DELAY, duration: 0.5 }}
           >
             <button
               className={`${styles.toggleButton} ${animationMode === "list" ? styles.active : ""}`}
@@ -379,13 +432,13 @@ export default function ResultPage() {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              exit={{ opacity: 0, y: -50, transition: { duration: 0.5 } }}
+              exit={{ opacity: 0, y: -50, transition: { duration: ANIMATION_CONFIG.MODE_EXIT_DURATION } }}
             >
               {sortedResults.map((result, index) => {
                 // 🎨 アニメーション順序: 下位(10位)から上位(1位)へ
                 const totalResults = sortedResults.length;
                 const reverseIndex = totalResults - 1 - index;
-                const animationDelay = reverseIndex * 0.4;
+                const animationDelay = reverseIndex * ANIMATION_CONFIG.LIST_CARD_DELAY_MULTIPLIER;
                 
                 return (
                   <ResultCard 
@@ -418,7 +471,7 @@ type ResultCardProps = {
 
 function ResultCard({ result, maxVotes, delay }: ResultCardProps) {
   // カウントアップアニメーション
-  const count = useCountUp(result.votes, 2);
+  const count = useCountUp(result.votes, ANIMATION_CONFIG.COUNT_UP_DURATION);
   
   // 棒グラフの幅（パーセンテージ）
   const barWidth = (result.votes / maxVotes) * 100;
@@ -430,7 +483,7 @@ function ResultCard({ result, maxVotes, delay }: ResultCardProps) {
       }`}
       variants={cardVariants}
       // whileHover={{ scale: 1.01, x: -2.5 }}
-      whileHover={{ scale: 1.0, x: -0 }}
+      // whileHover={{ scale: 1.0, x: -0 }}
     >
       {/* トロフィー（1-3位のみ） */}
       {result.rank <= 3 && (
@@ -440,9 +493,9 @@ function ResultCard({ result, maxVotes, delay }: ResultCardProps) {
           animate={{ scale: 1, rotate: 0 }}
           transition={{
             type: "spring" as const,
-            damping: 10,
-            stiffness: 200,
-            delay: delay + 0.5,
+            damping: ANIMATION_CONFIG.TROPHY_SPRING_DAMPING,
+            stiffness: ANIMATION_CONFIG.TROPHY_SPRING_STIFFNESS,
+            delay: delay + ANIMATION_CONFIG.TROPHY_ADDITIONAL_DELAY,
           }}
         >
           {result.rank === 1 && "🏆"}
@@ -460,9 +513,9 @@ function ResultCard({ result, maxVotes, delay }: ResultCardProps) {
         animate={{ scale: 1 }}
         transition={{
           type: "spring" as const,
-          damping: 12,
-          stiffness: 150,
-          delay: delay + 0.2,
+          damping: ANIMATION_CONFIG.BADGE_SPRING_DAMPING,
+          stiffness: ANIMATION_CONFIG.BADGE_SPRING_STIFFNESS,
+          delay: delay + ANIMATION_CONFIG.BADGE_ADDITIONAL_DELAY,
         }}
       >
         {result.rank}
@@ -495,9 +548,9 @@ function ResultCard({ result, maxVotes, delay }: ResultCardProps) {
           // initial={{ width: 0, marginLeft: `${barWidth}%` }}
           // animate={{ width: `${barWidth}%`, marginLeft: 0 }}
           transition={{
-            duration: 1.5,
+            duration: ANIMATION_CONFIG.BAR_ANIMATION_DURATION,
             ease: "easeOut",
-            delay: delay + 0.3,
+            delay: delay + ANIMATION_CONFIG.BAR_ADDITIONAL_DELAY,
           }}
         >
           {/* カウントアップする得票数 */}
@@ -505,7 +558,7 @@ function ResultCard({ result, maxVotes, delay }: ResultCardProps) {
             className={styles.voteCount}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: delay + 0.5 }}
+            transition={{ delay: delay + ANIMATION_CONFIG.COUNT_ADDITIONAL_DELAY }}
           >
             <motion.span>{count}</motion.span>
             <span className={styles.voteLabel}>票</span>
@@ -539,7 +592,7 @@ function PodiumView({ topThree }: PodiumViewProps) {
         className={styles.podiumTitle}
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
+        transition={{ delay: ANIMATION_CONFIG.PODIUM_TITLE_DELAY, duration: 0.6 }}
       >
         🏆 トップ3 🏆
       </motion.h2>
@@ -551,7 +604,7 @@ function PodiumView({ topThree }: PodiumViewProps) {
             className={styles.podiumItem}
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8, type: "spring", damping: 15 }}
+            transition={{ delay: ANIMATION_CONFIG.PODIUM_SECOND_DELAY, duration: 0.8, type: "spring", damping: ANIMATION_CONFIG.SPRING_DAMPING }}
           >
             <motion.div
               className={styles.podiumCard}
@@ -566,10 +619,10 @@ function PodiumView({ topThree }: PodiumViewProps) {
             </motion.div>
             <motion.div
               className={styles.podiumBase}
-              style={{ height: '180px', background: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)' }}
+              style={{ height: `${ANIMATION_CONFIG.PODIUM_HEIGHT_SECOND}px`, background: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)' }}
               initial={{ height: 0 }}
-              animate={{ height: '180px' }}
-              transition={{ delay: 1.0, duration: 0.6 }}
+              animate={{ height: `${ANIMATION_CONFIG.PODIUM_HEIGHT_SECOND}px` }}
+              transition={{ delay: ANIMATION_CONFIG.PODIUM_BASE_SECOND_DELAY, duration: 0.6 }}
             >
               <span className={styles.podiumLabel}>2位</span>
             </motion.div>
@@ -582,7 +635,7 @@ function PodiumView({ topThree }: PodiumViewProps) {
             className={styles.podiumItem}
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.0, duration: 0.8, type: "spring", damping: 15 }}
+            transition={{ delay: ANIMATION_CONFIG.PODIUM_FIRST_DELAY, duration: 0.8, type: "spring", damping: ANIMATION_CONFIG.SPRING_DAMPING }}
           >
             <motion.div
               className={styles.podiumCard}
@@ -613,10 +666,10 @@ function PodiumView({ topThree }: PodiumViewProps) {
             </motion.div>
             <motion.div
               className={styles.podiumBase}
-              style={{ height: '240px', background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)' }}
+              style={{ height: `${ANIMATION_CONFIG.PODIUM_HEIGHT_FIRST}px`, background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)' }}
               initial={{ height: 0 }}
-              animate={{ height: '240px' }}
-              transition={{ delay: 1.4, duration: 0.6 }}
+              animate={{ height: `${ANIMATION_CONFIG.PODIUM_HEIGHT_FIRST}px` }}
+              transition={{ delay: ANIMATION_CONFIG.PODIUM_BASE_FIRST_DELAY, duration: 0.6 }}
             >
               <span className={styles.podiumLabel}>1位</span>
             </motion.div>
@@ -629,7 +682,7 @@ function PodiumView({ topThree }: PodiumViewProps) {
             className={styles.podiumItem}
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.8, type: "spring", damping: 15 }}
+            transition={{ delay: ANIMATION_CONFIG.PODIUM_THIRD_DELAY, duration: 0.8, type: "spring", damping: ANIMATION_CONFIG.SPRING_DAMPING }}
           >
             <motion.div
               className={styles.podiumCard}
@@ -644,10 +697,10 @@ function PodiumView({ topThree }: PodiumViewProps) {
             </motion.div>
             <motion.div
               className={styles.podiumBase}
-              style={{ height: '140px', background: 'linear-gradient(135deg, #fb923c 0%, #d97706 100%)' }}
+              style={{ height: `${ANIMATION_CONFIG.PODIUM_HEIGHT_THIRD}px`, background: 'linear-gradient(135deg, #fb923c 0%, #d97706 100%)' }}
               initial={{ height: 0 }}
-              animate={{ height: '140px' }}
-              transition={{ delay: 1.2, duration: 0.6 }}
+              animate={{ height: `${ANIMATION_CONFIG.PODIUM_HEIGHT_THIRD}px` }}
+              transition={{ delay: ANIMATION_CONFIG.PODIUM_BASE_THIRD_DELAY, duration: 0.6 }}
             >
               <span className={styles.podiumLabel}>3位</span>
             </motion.div>

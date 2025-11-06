@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-// 1. next/font から Noto_Sans_JP をインポート
-import { Noto_Sans_JP, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
