@@ -1,7 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, useMotionValue, useTransform, animate, AnimatePresence } from "framer-motion";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import {
+  type Container,
+  type ISourceOptions,
+  MoveDirection,
+  OutMode,
+} from "@tsparticles/engine";
+import { loadSlim } from "@tsparticles/slim";
 import PageShell from "@/components/PageShell";
 import styles from "./page.module.css";
 
@@ -90,6 +98,102 @@ export default function ResultPage() {
   const [error, setError] = useState<string | null>(null);    // エラーメッセージ
   const [useMock, setUseMock] = useState(false);              // モックデータ使用フラグ
   const [animationMode, setAnimationMode] = useState<AnimationMode>("list"); // アニメーションモード
+  const [showConfetti, setShowConfetti] = useState(false);    // 紙吹雪表示フラグ
+  const [particlesInit, setParticlesInit] = useState(false);  // Particles初期化フラグ
+
+  // ============================================
+  // tsParticles の初期化（公式デモに従う）
+  // ============================================
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setParticlesInit(true);
+    });
+  }, []);
+
+  const particlesLoaded = async (container?: Container): Promise<void> => {
+    console.log("Particles loaded:", container);
+  };
+
+  // 紙吹雪の設定（公式デモの形式に従う）
+  const particlesOptions: ISourceOptions = useMemo(
+    () => ({
+      background: {
+        color: {
+          value: "transparent",
+        },
+      },
+      fpsLimit: 120,
+      fullScreen: {
+        enable: false,
+      },
+      particles: {
+        number: {
+          value: 100,
+          density: {
+            enable: true,
+          },
+        },
+        color: {
+          value: ["#fbbf24", "#94a3b8", "#fb923c", "#ef4444", "#3b82f6", "#10b981"],
+        },
+        shape: {
+          type: ["circle", "square"],
+        },
+        opacity: {
+          value: { min: 0.5, max: 1 },
+        },
+        size: {
+          value: { min: 4, max: 10 },
+        },
+        move: {
+          enable: true,
+          speed: { min: 3, max: 6 },
+          direction: MoveDirection.bottom,
+          random: true,
+          straight: false,
+          outModes: {
+            default: OutMode.out,
+            bottom: OutMode.out,
+            left: OutMode.out,
+            right: OutMode.out,
+            top: OutMode.none,
+          },
+        },
+        rotate: {
+          value: { min: 0, max: 360 },
+          direction: "random",
+          animation: {
+            enable: true,
+            speed: 15,
+          },
+        },
+        wobble: {
+          enable: true,
+          distance: 30,
+          speed: { min: 10, max: 20 },
+        },
+      },
+      detectRetina: true,
+      emitters: {
+        direction: MoveDirection.bottom,
+        rate: {
+          delay: 0.1,
+          quantity: 2,
+        },
+        size: {
+          width: 100,
+          height: 0,
+        },
+        position: {
+          x: 50,
+          y: 0,
+        },
+      },
+    }),
+    [],
+  );
 
   // ============================================
   // アニメーション自動切り替え
@@ -103,6 +207,7 @@ export default function ResultPage() {
       // リストアニメーション終了後、表彰台モードに切り替え
       const timer = setTimeout(() => {
         setAnimationMode("podium");
+        setShowConfetti(true); // 紙吹雪を表示
       }, totalListAnimationTime * 1000); // ミリ秒に変換
 
       return () => clearTimeout(timer);
@@ -207,7 +312,17 @@ export default function ResultPage() {
   return (
     <PageShell>
       <div className={styles.container}>
-        {/* 🎬 タイトルのアニメーション */}
+        {/* 🎊 紙吹雪エフェクト（表彰台モード時のみ） */}
+        {showConfetti && particlesInit && (
+          <Particles
+            id="tsparticles"
+            particlesLoaded={particlesLoaded}
+            options={particlesOptions}
+            className={styles.particlesContainer}
+          />
+        )}
+
+        {/* �🎬 タイトルのアニメーション */}
         <motion.div
           className={styles.header}
           initial={{ opacity: 0, y: -30 }}
@@ -235,13 +350,19 @@ export default function ResultPage() {
           >
             <button
               className={`${styles.toggleButton} ${animationMode === "list" ? styles.active : ""}`}
-              onClick={() => setAnimationMode("list")}
+              onClick={() => {
+                setAnimationMode("list");
+                setShowConfetti(false); // 一覧表示では紙吹雪を非表示
+              }}
             >
               📋 一覧表示
             </button>
             <button
               className={`${styles.toggleButton} ${animationMode === "podium" ? styles.active : ""}`}
-              onClick={() => setAnimationMode("podium")}
+              onClick={() => {
+                setAnimationMode("podium");
+                setShowConfetti(true); // 表彰台表示では紙吹雪を表示
+              }}
             >
               🏆 表彰台
             </button>
@@ -533,37 +654,6 @@ function PodiumView({ topThree }: PodiumViewProps) {
           </motion.div>
         )}
       </div>
-
-      {/* 紙吹雪エフェクト */}
-      <motion.div
-        className={styles.confetti}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-      >
-        {[...Array(30)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={styles.confettiPiece}
-            style={{
-              left: `${Math.random() * 100}%`,
-              background: ['#fbbf24', '#94a3b8', '#fb923c', '#ef4444', '#3b82f6'][i % 5],
-            }}
-            initial={{ y: -100, rotate: 0, opacity: 1 }}
-            animate={{
-              y: window.innerHeight + 100,
-              rotate: 360 * (Math.random() > 0.5 ? 1 : -1),
-              opacity: 0,
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              delay: Math.random() * 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
-      </motion.div>
     </motion.div>
   );
 }
