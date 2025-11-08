@@ -8,12 +8,12 @@ import Footer from "@/components/Footer";
 const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   subsets: ["latin"], // 'latin' は欧文文字用に推奨されます
   weight: ["400", "700", "900"], // 必要なウェイトを配列で指定
-  display: 'swap', // フォントの読み込み戦略
+  display: "swap", // フォントの読み込み戦略
   preload: true, // フォントのプリロードを有効化
 });
 
 export const metadata: Metadata = {
-  title: "HRV",
+  title: "Hackathon Result Visualizer",
   description: "Hackathon Result Visualizer",
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       {/* 3. <head>タグから<link>タグは削除する */}
-      <head /> 
+      <head />
       {/* 4. bodyタグのclassNameにフォント変数を適用 */}
       <body className={zenKakuGothicNew.className}>
         <Header />
