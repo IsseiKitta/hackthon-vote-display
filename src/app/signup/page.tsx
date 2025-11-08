@@ -4,14 +4,9 @@ import Button from "@/components/Button";
 import FormField from "@/components/FormField";
 
 export default function SignUpPage() {
-  const left = (
-    <div>
-      <Link href="../">← 戻る</Link>
-    </div>
-  );
 
   return (
-    <PageShell left={left}>
+    <PageShell>
       <h1 className="title">ハッカソン投票ビジュアライザーにサインアップ</h1>
       <div className="content">
         <FormField title="ユーザーネーム" name="username" type="text" placeholder="ユーザー名を入力" />

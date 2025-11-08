@@ -1,0 +1,369 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+}
+
+/* 紙吹雪コンテナ */
+.particlesContainer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: 9999 !important;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+/* 表示切り替えボタン */
+.viewToggle {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.toggleButton {
+  padding: 0.75rem 2rem;
+  font-size: 16px;
+  font-weight: 700;
+  border: 2px solid var(--foreground);
+  border-radius: 12px;
+  background: white;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: var(--background);
+}
+
+.toggleButton.active {
+  background: var(--foreground);
+  color: white;
+  transform: scale(1.05);
+}
+
+.toggleButton.active:hover {
+  transform: scale(1.05) translateY(-2px);
+}
+
+.resultGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.resultCard {
+  position: relative;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 60px 240px 50px 1fr;  /* 4カラム: バッジ | チーム情報 | スペーサー | バー */
+  align-items: stretch;
+  gap: 0;
+  min-height: 80px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* .resultCard:hover {
+  transform: translateX(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+} */
+
+.resultCard.rank1 {
+  background: linear-gradient(90deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.resultCard.rank2 {
+  background: linear-gradient(90deg, #94a3b8 0%, #64748b 100%);
+}
+
+.resultCard.rank3 {
+  background: linear-gradient(90deg, #fb923c 0%, #d97706 100%);
+}
+
+.resultCard:not(.rank1):not(.rank2):not(.rank3) {
+  background: linear-gradient(90deg, #6b7280 0%, #4b5563 100%);
+}
+
+.rankBadge {
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: white;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.rankBadge.rank1 {
+  background: rgba(251, 191, 36, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  font-size: 28px;
+  width: 56px;
+  height: 56px;
+}
+
+.rankBadge.rank2 {
+  background: rgba(148, 163, 184, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  font-size: 26px;
+  width: 54px;
+  height: 54px;
+}
+
+.rankBadge.rank3 {
+  background: rgba(251, 146, 60, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  font-size: 24px;
+  width: 52px;
+  height: 52px;
+}
+
+.teamInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-right: 2px solid rgba(255, 255, 255, 0.5);
+  min-width: 0;
+  z-index: 10;
+}
+
+.teamName {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--foreground);
+  margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.projectName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 2rem;
+  min-width: 0;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.25);
+  justify-content: flex-end;
+  backdrop-filter: blur(5px);
+  border-right: 3px solid rgba(255, 255, 255, 0.4);
+  padding: 0 2rem;
+  min-width: 5%;
+  z-index: 8;
+}
+
+/* 順位別の票数サイズ */
+.bar.rank1 .voteCount {
+  font-size: 42px;
+}
+
+.bar.rank2 .voteCount {
+  font-size: 36px;
+}
+
+.bar.rank3 .voteCount {
+  font-size: 32px;
+}
+
+.bar.rank1 .voteLabel {
+  font-size: 22px;
+}
+
+.bar.rank2 .voteLabel {
+  font-size: 20px;
+}
+
+.bar.rank3 .voteLabel {
+  font-size: 18px;
+}
+
+.voteCount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 26px;
+  font-weight: 900;
+  color: white;
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  -webkit-text-stroke: #64748b 0.5px;
+}
+
+.voteLabel {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.trophy {
+  font-size: 36px;
+  position: absolute;
+  left: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+.spacer {
+  /* スペーサーは空の領域として機能 */
+  min-width: 50px;  
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ============================================
+   表彰台スタイル
+   ============================================ */
+
+.podiumContainer {
+  position: relative;
+  width: 100%;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 0;
+  overflow: hidden;
+}
+
+.podiumTitle {
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--foreground);
+  margin-bottom: 3rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.podiumStage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+  position: relative;
+}
+
+.podiumItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  max-width: 280px;
+}
+
+.podiumCard {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.podiumRank {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.5rem;
+}
+
+.podiumTeamName {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--foreground);
+  margin: 0;
+  text-align: center;
+}
+
+.podiumProjectName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0;
+  text-align: center;
+}
+
+.podiumVotes {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--foreground);
+  margin-top: 0.5rem;
+}
+
+.podiumBase {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.podiumLabel {
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

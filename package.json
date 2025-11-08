@@ -14,8 +14,11 @@
   },
   "dependencies": {
     "@prisma/client": "^6.18.0",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
     "argon2": "^0.44.0",
     "cookie": "^1.0.2",
+    "framer-motion": "^12.23.24",
     "jsonwebtoken": "^9.0.2",
     "next": "16.0.1",
     "prisma": "^6.18.0",
