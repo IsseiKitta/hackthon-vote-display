@@ -10,8 +10,7 @@ export default function Header() {
   const router = useRouter();
   const { isLoggedIn } = useContext(AuthContext);
 
-  const handleTitleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleTitleClick = () => {
     if (isLoggedIn) {
       router.push('/mypage');
     } else {
