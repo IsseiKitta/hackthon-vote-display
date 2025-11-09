@@ -46,10 +46,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
+    // 初回チェック
     performAuthCheck();
+
+    // 15分ごとに認証状態を再チェック
+    const interval = setInterval(() => {
+      if (isMounted) {
+        performAuthCheck();
+      }
+    }, 15 * 60 * 1000); // 15分
 
     return () => {
       isMounted = false;
+      clearInterval(interval);
     };
   }, []);
 
